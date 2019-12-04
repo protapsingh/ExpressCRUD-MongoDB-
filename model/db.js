@@ -1,7 +1,7 @@
 const mongoose =require ('mongoose');
 
 const url='mongodb://localhost:27017/crud';
-mongoose.connect(url,{useNewUrlParser: true,useUnifiedTopology: true},(err)=>{
+mongoose.connect(url,{useNewUrlParser: true,useUnifiedTopology: true,useFindAndModify:false},(err)=>{
     if (!err){
         console.log('Database successfully connected');
     }else{

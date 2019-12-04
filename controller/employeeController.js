@@ -5,31 +5,17 @@ const Employee=mongoose.model('Employee');
 
 //function for render in home page
 exports.create=(req,res)=>{
-     res.render('employee/addOrEdit',{viewTitle:'Insert Or Update Here!'});
+     res.render('employee/addOrEdit',{viewTitle:'Insert Here!'});
 }
 
 //export function for employee add
 exports.add_employee=(req,res)=>{
-     var employee =new Employee();
-     employee.fullname=req.body.fullname;
-     employee.email=req.body.email;
-     employee.mobile=req.body.mobile;
-     employee.city=req.body.city;
-     employee.save((err,doc)=>{
-          if(!err){
-              
-               res.redirect('/employee/list');
-          }
-          else{
-               if(err.name=='ValidationError'){
-               handleValidationError(err,req.body);
-               res.render('employee/addOrEdit',{viewTitle:'Insert Employee',employee:req.body}); 
-               }
-               else{
-                    console.log('error during record insertion: '+ err);
-               }
-             }
-     });
+     if(req.body.id==''){
+          insert_employee(req,res);
+     }else{
+          update_employee(req,res);
+     }
+     
 
 }
 exports.employee_list=(req,res)=>{
@@ -43,6 +29,15 @@ exports.employee_list=(req,res)=>{
      
 }
 
+exports.edit_employee=(req,res)=>{
+     Employee.findById(req.params.id,(err,data)=>{
+      if(!err){
+           res.render('employee/addOrEdit',{viewTitle:"Update Employee", employee:data});
+      }
+     })
+     
+     
+}
 
 // creating a function which will used to show all error messages
 function handleValidationError(err,body){
@@ -64,5 +59,47 @@ function handleValidationError(err,body){
                break;
           }
      }
+}
 
+//insert new employee
+function insert_employee(req,res){
+     var employee =new Employee();
+     employee.fullname=req.body.fullname;
+     employee.email=req.body.email;
+     employee.mobile=req.body.mobile;
+     employee.city=req.body.city;
+     employee.save((err,doc)=>{
+     if(!err){
+         
+          res.redirect('/employee/list');
+     }
+     else{
+          if(err.name=='ValidationError'){
+          handleValidationError(err,req.body);
+          res.render('employee/addOrEdit',{viewTitle:'Insert Employee',employee:req.body}); 
+          }
+          else{
+               console.log('error during record insertion: '+ err);
+          }
+        }
+});
+
+}
+
+//update nmew employee
+function update_employee(req,res){
+     Employee.findOneAndUpdate({_id:req.body.id},req.body,{new: true},(err,data)=>{
+          if(!err){
+               res.redirect('employee/list');
+          }else{
+               if(err.name=='ValidationError'){
+                    handleValidationError(err,req.body);
+                    res.render('employee/addOrEdit',{viewTitle:'Update Employee',employee:req.body}); 
+                    }
+                    else{
+                         console.log('error during record insertion: '+ err);
+                    }
+          }
+
+     })
 }
