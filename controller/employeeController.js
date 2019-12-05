@@ -38,7 +38,12 @@ exports.edit_employee=(req,res)=>{
      
      
 }
+exports.delete_employee=(req,res)=>{
+     Employee.findOneAndRemove({_id:req.params.id},(err,doc)=>{
+          res.redirect('/employee/list');
+     })
 
+}
 // creating a function which will used to show all error messages
 function handleValidationError(err,body){
      for(field in err.errors)
