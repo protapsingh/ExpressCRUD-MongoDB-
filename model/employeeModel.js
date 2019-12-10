@@ -11,6 +11,9 @@ var employeeSchema =new mongoose.Schema({
     },
     city:{type: String,
     required:'City field is required!'
+    },
+    image:{type: String,
+    required:'field is required!'
     }
 });
 mongoose.model('Employee',employeeSchema);

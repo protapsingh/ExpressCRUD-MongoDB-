@@ -2,22 +2,31 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const Employee=mongoose.model('Employee');
-
 //function for render in home page
 exports.create=(req,res)=>{
      res.render('employee/addOrEdit',{viewTitle:'Insert Here!'});
 }
 
 //export function for employee add
-exports.add_employee=(req,res)=>{
+exports.add_employee=(req,res,next)=>{
+     const file = req.file
+     if (!file) {
+     req.body.image="";
+     }else{
+          req.body.image=file.filename;
+     }
+
+ //sending data to add or update route
      if(req.body.id==''){
           insert_employee(req,res);
      }else{
+          
           update_employee(req,res);
      }
      
 
 }
+
 exports.employee_list=(req,res)=>{
      Employee.find((err,data)=>{
       if(!err){
@@ -62,6 +71,9 @@ function handleValidationError(err,body){
                case 'city':
                body['cityError']=err.errors[field].message;
                break;
+               case 'image':
+               body['imageError']=err.errors[field].message;
+               break;
           }
      }
 }
@@ -73,6 +85,7 @@ function insert_employee(req,res){
      employee.email=req.body.email;
      employee.mobile=req.body.mobile;
      employee.city=req.body.city;
+     employee.image=req.body.image;
      employee.save((err,doc)=>{
      if(!err){
          
